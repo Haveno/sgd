@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clínica ARI LEITE - Sistema de Gestão de Documentos</title>
+  <meta name="description"
+    content="Sistema de Gestão de Documentos e Procedimentos Operacionais Padrão da Clínica ARI LEITE">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root {
+      --gradient-start: #1a1a2e;
+      --gradient-end: #16213e;
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.7);
+      --text-muted: rgba(255, 255, 255, 0.5);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+      min-height: 100vh;
+      color: var(--text-primary);
+    }
+
+    .slide {
+      display: none;
+      flex-direction: column;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .slide.active {
+      display: flex;
+    }
+
+    /* Header */
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 2rem;
+    }
+
+    .header-title {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      letter-spacing: 0.05em;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid var(--card-border);
+    }
+
+    .cover-logo-img {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--card-border);
+      margin-bottom: 2rem;
+    }
+
+    .logo-text {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    /* Content */
+    .slide-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Cover Slide */
+    .cover-logo {
+      width: 200px;
+      height: 200px;
+      margin-bottom: 2rem;
+    }
+
+    .cover-logo svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .cover-title {
+      font-size: 1.5rem;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+    }
+
+    .click-hint {
+      position: absolute;
+      bottom: 2rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Cards */
+    .card-grid {
+      display: grid;
+      gap: 1rem;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .card-grid.cols-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .card-grid.cols-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    @media (max-width: 768px) {
+
+      .card-grid.cols-2,
+      .card-grid.cols-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .slide-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .slide-card:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+      color: inherit;
+    }
+
+    .slide-card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .slide-card p {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    .department-card {
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .department-card i {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-secondary);
+    }
+
+    .department-card h3 {
+      font-size: 0.875rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* Procedimentos Slide */
+    .procedimentos-title {
+      font-size: 2.5rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      margin-bottom: 0.5rem;
+    }
+
+    .procedimentos-subtitle {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      font-weight: 300;
+    }
+
+    .procedimentos-desc {
+      margin-top: 2rem;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      max-width: 400px;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    .slide-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-top: 1rem;
+      margin-top: 2rem;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .nav-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid var(--card-border);
+      background: transparent;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .nav-icon:hover {
+      background: var(--card-bg);
+      color: var(--text-primary);
+    }
+
+    .nav-icon:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .date-text {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    /* Pagination */
+    .pagination-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .pagination-text {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-fade-in {
+      animation: fadeIn 0.5s ease forwards;
+    }
+
+    .animate-slide-up {
+      animation: slideUp 0.5s ease forwards;
+    }
+
+    .clickable-slide {
+      cursor: pointer;
+    }
+
+    /* Procedures list */
+    .procedures-container {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem 0;
+    }
+
+    /* Search */
+    .search-container {
+      width: 100%;
+      max-width: 500px;
+      margin-bottom: 1.5rem;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 0.5rem;
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .search-input:focus {
+      border-color: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .search-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .search-wrapper {
+      position: relative;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .search-results-info {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      text-align: center;
+    }
+
+    .department-badge {
+      font-size: 0.625rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 0.25rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Slide 1: Cover -->
+  <div id="slide-cover" class="slide active clickable-slide" onclick="navigateTo('procedimentos')">
+    <div class="slide-content">
+      <h1 class="cover-title">Clínica ARI LEITE</h1>
+    </div>
+    <p class="click-hint">Clique para continuar</p>
+  </div>
+
+  <!-- Slide 2: Procedimentos -->
+  <div id="slide-procedimentos" class="slide clickable-slide" onclick="navigateTo('departments')">
+    <header class="slide-header">
+      <span class="header-title">Sistema de Gestão de Documentos</span>
+      <div class="logo-container">
+        <span class="logo-text">CLÍNICA ARI LEITE</span>
+      </div>
+    </header>
+    <div class="slide-content animate-slide-up">
+      <h2 class="procedimentos-title">Procedimentos</h2>
+      <p class="procedimentos-desc">
+        Procedimento Operacional Padrão - Documentação padronizada para garantir a qualidade e segurança dos processos.
+      </p>
+    </div>
+    <footer class="slide-footer">
+      <div class="nav-buttons">
+        <button class="nav-icon" onclick="event.stopPropagation(); goHome()" title="Início">
+          <i class="bi bi-house"></i>
+        </button>
+        <button class="nav-icon" onclick="event.stopPropagation(); goBack()" title="Voltar">
+          <i class="bi bi-arrow-left"></i>
+        </button>
+      </div>
+      <span class="date-text" id="date-procedimentos"></span>
+    </footer>
+  </div>
+
+  <!-- Slide 3: Departments -->
+  <div id="slide-departments" class="slide">
+    <header class="slide-header">
+      <span class="header-title">Sistema de Gestão de Documentos</span>
+      <div class="logo-container">
+        <span class="logo-text">CLÍNICA ARI LEITE</span>
+      </div>
+    </header>
+    <div class="slide-content">
+      <div class="search-container animate-slide-up">
+        <div class="search-wrapper">
+          <i class="bi bi-search search-icon"></i>
+          <input type="text" class="search-input" id="search-input" placeholder="Buscar procedimento..."
+            oninput="handleSearch(this.value)">
+        </div>
+        <p class="search-results-info" id="search-results-info"></p>
+      </div>
+      <div id="search-results" class="card-grid cols-3" style="display: none; max-width: 900px; width: 100%;"></div>
+      <div id="departments-grid" class="card-grid cols-2 animate-slide-up">
+        <div class="slide-card department-card" onclick="selectDepartment('enfermagem')">
+          <i class="bi bi-heart-pulse"></i>
+          <h3>Enfermagem</h3>
+        </div>
+        <div class="slide-card department-card" onclick="selectDepartment('comercial_ii')">
+          <i class="bi bi-briefcase"></i>
+          <h3>Comercial II</h3>
+        </div>
+      </div>
+    </div>
+    <footer class="slide-footer">
+      <div class="nav-buttons">
+        <button class="nav-icon" onclick="goHome()" title="Início">
+          <i class="bi bi-house"></i>
+        </button>
+        <button class="nav-icon" onclick="goBack()" title="Voltar">
+          <i class="bi bi-arrow-left"></i>
+        </button>
+      </div>
+      <span class="date-text" id="date-departments"></span>
+    </footer>
+  </div>
+
+  <!-- Slide 4: Procedures List -->
+  <div id="slide-procedures" class="slide">
+    <header class="slide-header">
+      <span class="header-title">Sistema de Gestão de Documentos</span>
+      <div class="logo-container">
+        <span class="logo-text">CLÍNICA ARI LEITE</span>
+      </div>
+    </header>
+    <div class="procedures-container">
+      <div id="procedures-grid" class="card-grid cols-3 animate-slide-up">
+        <!-- Procedures will be inserted here -->
+      </div>
+      <div id="pagination" class="pagination-controls" style="display: none;">
+        <button class="nav-icon" id="btn-prev" onclick="changePage(-1)">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+        <span class="pagination-text" id="page-info">1 / 1</span>
+        <button class="nav-icon" id="btn-next" onclick="changePage(1)">
+          <i class="bi bi-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+    <footer class="slide-footer">
+      <div class="nav-buttons">
+        <button class="nav-icon" onclick="goHome()" title="Início">
+          <i class="bi bi-house"></i>
+        </button>
+        <button class="nav-icon" onclick="goBack()" title="Voltar">
+          <i class="bi bi-arrow-left"></i>
+        </button>
+      </div>
+      <span class="date-text" id="date-procedures"></span>
+    </footer>
+  </div>
+
+  <script>
+    // Procedures data - PDFs
+    const departmentData = {
+      enfermagem: {
+        title: "ENFERMAGEM",
+        procedures: [
+          [
+            { title: "Cateterismo Vesical de Demora", pdfUrl: "enfermagem/Cateterismo Vesical de Demora.pdf" },
+            { title: "Descrição de cargo - Técnica de Enfermagem", pdfUrl: "enfermagem/Descrição de cargo - Técnica de Enfermagem.pdf" },
+            { title: "Lavagem das Mãos", pdfUrl: "enfermagem/Lavagem das Mãos.pdf" },
+            { title: "Montagem da Sala Para Cirurgia CC Clinica", pdfUrl: "enfermagem/Montagem da Sala Para Cirurgia CC Clinica.pdf" },
+            { title: "Morpheus Corporal e Facial", pdfUrl: "enfermagem/Morpheus Corporal e Facial.pdf" },
+            { title: "ORIENTAÇÃO CIRURGIAS - CENTRO CIRÚRGICO", pdfUrl: "enfermagem/ORIENTAÇÃO CIRURGIAS- CENTRO CIRURGICO.pdf" },
+            { title: "Organização do Consultório de Enfermagem", pdfUrl: "enfermagem/Organização do Consultório de Enfermagem .pdf" },
+            { title: "Organização e Conferência do Carro de Emergência", pdfUrl: "enfermagem/Organização e Conferência do Carro de Emergência.pdf" },
+            { title: "Oxigenoterapia Hiperbárica (OHB)", pdfUrl: "enfermagem/Oxigenoterapia Hiperbárica (OHB).pdf" },
+            { title: "Paramentação Cirúrgica", pdfUrl: "enfermagem/Paramentação Cirúrgica.pdf" },
+            { title: "Preparo e Administração de Medicação Por Via Endovenosa", pdfUrl: "enfermagem/Preparo e Administração de Medicação Por Via Endovenosa.pdf" },
+            { title: "Preparo e Administração de Medicação Por Via Intramuscular", pdfUrl: "enfermagem/Preparo e Administração de Medicação Por Via Intramuscular.pdf" },
+          ],
+          [
+            { title: "Preparo e Administração de Medicação Por Via Subcutânea", pdfUrl: "enfermagem/Preparo e Administração de Medicação Por Via Subcutânea.pdf" },
+            { title: "Primeira Consulta - Presencial", pdfUrl: "enfermagem/Primeira Consulta - Presencial.pdf" },
+            { title: "Punção Venosa Periférica", pdfUrl: "enfermagem/Punção Venosa Periférica - ok.pdf" },
+            { title: "Receber Paciente - Dia Cirurgia", pdfUrl: "enfermagem/Receber Paciente - Dia Cirurgia.pdf" },
+            { title: "Retirada de Ponto", pdfUrl: "enfermagem/Retirada de Ponto.pdf" },
+            { title: "Retorno Pós e Pré", pdfUrl: "enfermagem/Retorno Pós e Pré .pdf" },
+            { title: "Transporte de aparelho, Renuvion, Vaser, Ultrassom", pdfUrl: "enfermagem/Transporte de aparelho, Renuvion, Vaser, Ultrassom.pdf" },
+          ]
+        ]
+      },
+      comercial_ii: {
+        title: "COMERCIAL II",
+        procedures: [
+          [
+            { title: "Agenda do Aparelho Morpheus", pdfUrl: "comercial II/Agenda do Aparelho Morpheus.pdf" },
+            { title: "Agenda do Aparelho Renuvion", pdfUrl: "comercial II/Agenda do Aparelho Renuvion.pdf" },
+            { title: "Agendamento de Hospital e Anestesista", pdfUrl: "comercial II/Agendamento de Hospital e Anestesista.pdf" },
+            { title: "Formas de Pagamento e Designação de Contas", pdfUrl: "comercial II/Formas de Pagamento e Designação de Contas.pdf" },
+            { title: "Formulação de Contrato para Pacientes de Cirurgia Plástica", pdfUrl: "comercial II/Formulação de Contrato para Pacientes de Cirurgia Plástica.pdf" },
+            { title: "Montagem dos Orçamentos Cirúrgicos e de Procedimentos", pdfUrl: "comercial II/Montagem dos Orçamentos Cirúrgicos e de Procedimentos.pdf" },
+            { title: "Não Fechamento de Cirurgia", pdfUrl: "comercial II/Não Fechamento de Cirurgia.pdf" },
+            { title: "Planejamento Pré e Pós Cirúrgico", pdfUrl: "comercial II/Planejamento Pré e Pós Cirúrgico.pdf" },
+            { title: "Preenchimento das Planilhas de Vendas", pdfUrl: "comercial II/Preenchimento das Planilhas de Vendas.pdf" },
+            { title: "Pós Fechamento da Cirurgia", pdfUrl: "comercial II/Pós Fechamento da Cirurgia.pdf" },
+            { title: "Regras Financeiras e de Fechamento de Cirurgias", pdfUrl: "comercial II/Regras Financeiras e de Fechamento de Cirurgias.pdf" },
+            { title: "Solicitação de Implantes Mamários", pdfUrl: "comercial II/Solicitação de Implantes Mamários.pdf" },
+          ],
+          [
+            { title: "Transporte do Aparelho Morpheus", pdfUrl: "comercial II/Transporte do Aparelho Morpheus.pdf" }
+          ]
+        ]
+      }
+    };
+
+    // State
+    let currentSlide = 'cover';
+    let history = [];
+    let selectedDepartment = null;
+    let currentPage = 0;
+
+    // Navigation functions
+    function navigateTo(slideId) {
+      history.push(currentSlide);
+      showSlide(slideId);
+    }
+
+    function showSlide(slideId) {
+      document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+      document.getElementById('slide-' + slideId).classList.add('active');
+      currentSlide = slideId;
+    }
+
+    function goBack() {
+      if (history.length > 0) {
+        const prevSlide = history.pop();
+        if (prevSlide === 'departments') {
+          selectedDepartment = null;
+          currentPage = 0;
+        }
+        showSlide(prevSlide);
+      }
+    }
+
+    function goHome() {
+      history = [];
+      selectedDepartment = null;
+      currentPage = 0;
+      showSlide('cover');
+    }
+
+    function selectDepartment(dept) {
+      selectedDepartment = dept;
+      currentPage = 0;
+      renderProcedures();
+      navigateTo('procedures');
+    }
+
+    function renderProcedures() {
+      const data = departmentData[selectedDepartment];
+      const procedures = data.procedures[currentPage] || [];
+      const totalPages = data.procedures.length;
+
+      const grid = document.getElementById('procedures-grid');
+      grid.innerHTML = '';
+
+      // Determine grid columns based on item count
+      const count = procedures.length;
+      grid.classList.remove('cols-2', 'cols-3');
+      if (count <= 4) {
+        grid.classList.add('cols-2');
+      } else {
+        grid.classList.add('cols-3');
+      }
+
+      procedures.forEach((proc, index) => {
+        const card = document.createElement('a');
+        card.href = proc.pdfUrl;
+        card.target = '_blank';
+        card.rel = 'noopener noreferrer';
+        card.className = 'slide-card';
+        card.style.animationDelay = `${index * 0.05}s`;
+        card.innerHTML = `<p style="font-weight: 600; font-size: 0.875rem;">${proc.title}</p>`;
+        grid.appendChild(card);
+      });
+
+      // Pagination
+      const pagination = document.getElementById('pagination');
+      if (totalPages > 1) {
+        pagination.style.display = 'flex';
+        document.getElementById('page-info').textContent = `${currentPage + 1} / ${totalPages}`;
+        document.getElementById('btn-prev').disabled = currentPage === 0;
+        document.getElementById('btn-next').disabled = currentPage === totalPages - 1;
+      } else {
+        pagination.style.display = 'none';
+      }
+    }
+
+    function changePage(delta) {
+      const totalPages = departmentData[selectedDepartment].procedures.length;
+      const newPage = currentPage + delta;
+      if (newPage >= 0 && newPage < totalPages) {
+        currentPage = newPage;
+        renderProcedures();
+      }
+    }
+
+    // Search functionality
+    function handleSearch(query) {
+      const searchResults = document.getElementById('search-results');
+      const departmentsGrid = document.getElementById('departments-grid');
+      const searchInfo = document.getElementById('search-results-info');
+
+      if (!query.trim()) {
+        searchResults.style.display = 'none';
+        departmentsGrid.style.display = 'grid';
+        searchInfo.textContent = '';
+        return;
+      }
+
+      const normalizedQuery = query.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const results = [];
+
+      Object.entries(departmentData).forEach(([deptKey, dept]) => {
+        dept.procedures.flat().forEach(proc => {
+          const normalizedTitle = proc.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+          if (normalizedTitle.includes(normalizedQuery)) {
+            results.push({
+              ...proc,
+              department: dept.title
+            });
+          }
+        });
+      });
+
+      departmentsGrid.style.display = 'none';
+      searchResults.style.display = 'grid';
+      searchResults.innerHTML = '';
+
+      if (results.length === 0) {
+        searchInfo.textContent = 'Nenhum procedimento encontrado';
+        return;
+      }
+
+      searchInfo.textContent = `${results.length} procedimento${results.length > 1 ? 's' : ''} encontrado${results.length > 1 ? 's' : ''}`;
+
+      results.forEach((proc, index) => {
+        const card = document.createElement('a');
+        card.href = proc.pdfUrl;
+        card.target = '_blank';
+        card.rel = 'noopener noreferrer';
+        card.className = 'slide-card';
+        card.style.animationDelay = `${index * 0.03}s`;
+        card.innerHTML = `
+          <p style="font-weight: 600; font-size: 0.875rem;">${proc.title}</p>
+          <p class="department-badge">${proc.department}</p>
+        `;
+        searchResults.appendChild(card);
+      });
+    }
+
+    // Date formatting
+    function formatDate() {
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      return new Date().toLocaleDateString('pt-BR', options);
+    }
+
+    // Initialize dates
+    document.querySelectorAll('.date-text').forEach(el => {
+      el.textContent = formatDate();
+    });
+  </script>
+</body>
+
+</html>
